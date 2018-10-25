@@ -2,6 +2,8 @@ body {
   margin-top: 3em;
   background: white;
   font-family: sans-serif;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
 abbr[title] {
