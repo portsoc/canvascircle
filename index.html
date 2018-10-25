@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Circles</title>
+<p>A little example of how <b style="color: blue;">sine</b> and <b style="color: red;">cosine</b> combine to draw a circle.
+<p>The <b style="color: blue;">blue</b> line shows a <b style="color: blue;">sine</b> wave travelling along the x axis. For values of <i>i</i> between 0 and <abbr title="this is Tau, which = 2π">τ</abbr>, the wave starts from the bottom of the canvas before sweeping up to the top and then back down.
+
+<p>The <b style="color: red;">red</b> line shows how (for the same values of i, and when plotted on a vertical instead of a horizontal axis) a cosine wave does not start at the edge of the canvas, but instead starts in the middle, so it sweeps right then left, before return to the middle.
+
+<p>The <b style="color: purple;">purple</b> line combines the <b style="color: red;">x</b> position of the <b style="color: red;">cosine wave</b>, with the <b style="color: blue;">y</b> position of the <b style="color: blue;">sine wave</b>, and thus naturally draws a circle.
+
+<style id="jsbin-css">
+body {
+margin-top: 3em;
+background: white;
+}
+
+abbr[title] {
+  border-bottom: none !important;
+  cursor: inherit !important;
+  text-decoration: none !important;
+}
+</style>
+</head>
+<body>
+<script id="jsbin-javascript">
+const canvas = document.createElement("canvas");
+document.body.appendChild(canvas);
+const c = canvas.getContext('2d');
+
+const r=200; // radius
+const d=2*r; // diameter
+const blobsize = 10;
+canvas.width=2*r+blobsize;
+canvas.height=2*r+blobsize;
+
+const tau = 2*Math.PI;
+const step = 0.01;
+const radius = 150;
+const multiplier = d/tau;
+
+function drawBlob(x,y, col) {
+  c.fillStyle = col;
+  c.fillRect( x, y, blobsize,blobsize );
+}
+
+function drawConn(x,y, x1,y1, col) {
+  c.strokeStyle = col;
+  c.strokeWidth = "2";
+  c.moveTo( x, y );
+  c.lineTo( x1, y1 );
+  c.stroke();
+}
+
+
+function fadeContent() {
+  c.fillStyle = `rgba(255,255,255,0.01)`;
+  c.fillRect( 0,0, canvas.width, canvas.height);
+}
+
+let i=0;
+
+function drawNext() {
+  i+=step;
+  fadeContent();
+  let x = r + r*Math.sin(i);
+  let y = r + r*Math.cos(i);
+  let axispos = i*multiplier % d;
+  
+  drawBlob( x, y, `purple`);
+
+  drawBlob( axispos, y, 'blue'  ); 
+  drawBlob( x, axispos, 'red'  ); 
+
+  window.requestAnimationFrame(drawNext);
+}
+
+drawNext();
+</script>
+
+
+<script id="jsbin-source-css" type="text/css">body {
+margin-top: 3em;
+background: white;
+}
+
+abbr[title] {
+  border-bottom: none !important;
+  cursor: inherit !important;
+  text-decoration: none !important;
+}</script>
+
+<script id="jsbin-source-javascript" type="text/javascript">const canvas = document.createElement("canvas");
+document.body.appendChild(canvas);
+const c = canvas.getContext('2d');
+
+const r=200; // radius
+const d=2*r; // diameter
+const blobsize = 10;
+canvas.width=2*r+blobsize;
+canvas.height=2*r+blobsize;
+
+const tau = 2*Math.PI;
+const step = 0.01;
+const radius = 150;
+const multiplier = d/tau;
+
+function drawBlob(x,y, col) {
+  c.fillStyle = col;
+  c.fillRect( x, y, blobsize,blobsize );
+}
+
+function drawConn(x,y, x1,y1, col) {
+  c.strokeStyle = col;
+  c.strokeWidth = "2";
+  c.moveTo( x, y );
+  c.lineTo( x1, y1 );
+  c.stroke();
+}
+
+
+function fadeContent() {
+  c.fillStyle = `rgba(255,255,255,0.01)`;
+  c.fillRect( 0,0, canvas.width, canvas.height);
+}
+
+let i=0;
+
+function drawNext() {
+  i+=step;
+  fadeContent();
+  let x = r + r*Math.sin(i);
+  let y = r + r*Math.cos(i);
+  let axispos = i*multiplier % d;
+  
+  drawBlob( x, y, `purple`);
+
+  drawBlob( axispos, y, 'blue'  ); 
+  drawBlob( x, axispos, 'red'  ); 
+
+  window.requestAnimationFrame(drawNext);
+}
+
+drawNext();</script></body>
+</html>
