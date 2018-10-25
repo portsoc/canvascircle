@@ -1,5 +1,6 @@
+"use strict";
+
 const canvas = document.createElement("canvas");
-document.body.appendChild(canvas);
 const c = canvas.getContext('2d');
 
 const r=200; // radius
@@ -49,4 +50,5 @@ function drawNext() {
   window.requestAnimationFrame(drawNext);
 }
 
+document.body.appendChild(canvas);
 drawNext();

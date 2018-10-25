@@ -1,0 +1,15 @@
+body {
+  margin-top: 3em;
+  background: white;
+  font-family: sans-serif;
+}
+
+abbr[title] {
+  border-bottom: none !important;
+  cursor: inherit !important;
+  text-decoration: none !important;
+}
+
+i { color: blue; font-style: normal;}
+em { color: red; font-style: normal;}
+b { color: purple; font-weight: normal;}
