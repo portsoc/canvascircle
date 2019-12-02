@@ -136,6 +136,12 @@ function drawNext() {
   // redraw the background covering the previous frame.
   c.putImageData( background, 0, 0 )
 
+  if (show.circle && show.lines) {
+    if (show.sin) drawConn( x, y, axispos, y, 'blue', true );
+    if (show.cos) drawConn( x, y, x, axispos, 'red', true );
+  }
+
+
   if (show.sin) {
     if (show.edges) {
       drawConn( axispos, y, axispos, 0, 'blue' );
@@ -153,11 +159,6 @@ function drawNext() {
   }
 
   if (show.circle) {
-    if (show.lines) {
-      if (show.sin) drawConn( x, y, axispos, y, 'blue', true );
-      if (show.cos) drawConn( x, y, x, axispos, 'red', true );
-    }
-
     drawBlob( x, y, 'white', 'purple');
   }
 
