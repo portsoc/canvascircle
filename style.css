@@ -1,10 +1,48 @@
+
+@media (max-width: 1200px) {
+  :root {
+    --layout: column;
+  }
+  canvas {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --layout: row;
+  }
+  canvas {
+    max-height: 100%;
+    width: 800px;
+  }
+}
+
+code {
+  font-weight: bold;
+  font-size: 120%;
+  border: solid thin black;
+  min-width: 1em;
+  display: inline-block;
+  border-radius: 0.3em;
+  padding: 0;
+}
+
 body {
-  margin-top: 3em;
   background: white;
   font-family: sans-serif;
-  max-width: 400px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: var(--layout);
+  min-height: 100vh;
 }
+
+main {
+  margin: 2vmin;
+  max-width: 40em;
+}
+
 
 abbr[title] {
   border-bottom: none !important;
@@ -15,3 +53,9 @@ abbr[title] {
 i { color: blue; font-style: normal;}
 em { color: red; font-style: normal;}
 b { color: purple; font-weight: normal;}
+
+canvas {
+  margin: 2vmin;
+  border: thin solid black;
+}
+
