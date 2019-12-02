@@ -29,8 +29,14 @@ function onoff(e) {
   if (e.key === "l") show.lines = !show.lines;
   if (e.key === "p") show.circle = !show.circle;
   if (e.key === "e") show.edges = !show.edges;
-  if (e.key === "ArrowRight") stepOn(+10);
-  if (e.key === "ArrowLeft") stepOn(-10);
+  if (e.key === "ArrowRight") {
+    stepOn(+10);
+    show.auto = false;
+  }
+  if (e.key === "ArrowLeft") {
+    stepOn(-10);
+    show.auto = false;
+  }
   if (e.key === "a") show.auto = !show.auto;
   if (e.key === " ") {
     show.auto = !show.auto;
