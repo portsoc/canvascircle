@@ -54,8 +54,3 @@ i { color: blue; font-style: normal;}
 em { color: red; font-style: normal;}
 b { color: purple; font-weight: normal;}
 
-canvas {
-  margin: 2vmin;
-  border: thin solid black;
-}
-
