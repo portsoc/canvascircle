@@ -29,18 +29,22 @@ function onoff(e) {
   if (e.key === "l") show.lines = !show.lines;
   if (e.key === "p") show.circle = !show.circle;
   if (e.key === "e") show.edges = !show.edges;
-  if (e.key === "a") show.auto = !show.auto;
   if (e.key === "ArrowRight") stepOn(+10);
   if (e.key === "ArrowLeft") stepOn(-10);
-
+  if (e.key === "a") show.auto = !show.auto;
+  if (e.key === " ") {
+    show.auto = !show.auto;
+    e.preventDefault();
+  }
   drawInitial();
 }
 
-document.addEventListener('keyup', onoff);
+document.addEventListener('keydown', onoff);
 
 canvas.width=2*r+margin;
 canvas.height=2*r+margin;
 c.translate(margin/2, margin/2);
+c.lineWidth = 2;
 
 function drawBlob(x,y, fill, stroke) {
   c.beginPath();
@@ -55,7 +59,6 @@ function drawBlob(x,y, fill, stroke) {
 function drawConn(x,y, x1,y1, col, dashed = false) {
   c.beginPath();
   c.strokeStyle = col;
-  c.lineWidth = 2;
   c.moveTo( x , y  );
   c.lineTo( x1, y1  );
   if (dashed) c.setLineDash([4,4]);
