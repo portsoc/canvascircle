@@ -8,7 +8,7 @@ const r=200; // radius
 const d=2*r; // diameter
 const blobsize = 10;
 const blobOffset = blobsize/2;
-const margin = 8*blobsize;
+const margin = 16*blobsize;
 
 const tau = 2*Math.PI;
 const step = 0.005;
