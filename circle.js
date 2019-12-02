@@ -20,7 +20,8 @@ const show = {
   lines: false,
   edges: false,
   circle: false,
-  auto: false
+  auto: false,
+  numbers: true
 };
 
 function onoff(e) {
@@ -29,6 +30,7 @@ function onoff(e) {
   if (e.key === "l") show.lines = !show.lines;
   if (e.key === "p") show.circle = !show.circle;
   if (e.key === "e") show.edges = !show.edges;
+  if (e.key === "n") show.numbers = !show.numbers;
   if (e.key === "ArrowRight") {
     stepOn(+10);
     show.auto = false;
@@ -51,6 +53,7 @@ canvas.width=2*r+margin;
 canvas.height=2*r+margin;
 c.translate(margin/2, margin/2);
 c.lineWidth = 2;
+c.font = '12px sans-serif';
 
 function drawBlob(x,y, fill, stroke) {
   c.beginPath();
@@ -60,6 +63,11 @@ function drawBlob(x,y, fill, stroke) {
   c.fill();
   c.stroke();
   c.closePath();
+
+  if (show.numbers) {
+    c.fillStyle = stroke;
+    c.fillText("x" + x.toFixed(0) + " y" + y.toFixed(0), x+blobsize, y-blobsize);
+  }
 }
 
 function drawConn(x,y, x1,y1, col, dashed = false) {
