@@ -50,7 +50,38 @@ abbr[title] {
   text-decoration: none !important;
 }
 
+#mobileControls{
+  min-width: 0;
+  display: grid;
+  column-gap: 0.5em;
+  row-gap: 0.5em;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "a a s c e l p n"
+    "a a left left left right right right";
+}
+
+#mobileControls > button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: large;
+  padding: 0;
+  min-width: 0;
+}
+
+#a { grid-area: a; }
+#s { grid-area: s; }
+#c { grid-area: c; }
+#e { grid-area: e; }
+#l { grid-area: l; }
+#p { grid-area: p; }
+#n { grid-area: n; }
+#arrowLeft { grid-area: left }
+#arrowRight { grid-area: right }
+
+
 i { color: blue; font-style: normal;}
 em { color: red; font-style: normal;}
 b { color: purple; font-weight: normal;}
-
