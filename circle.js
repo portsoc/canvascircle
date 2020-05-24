@@ -25,22 +25,23 @@ const show = {
 };
 
 function onoff(e) {
-  if (e.key === "c") show.cos = !show.cos;
-  if (e.key === "s") show.sin = !show.sin;
-  if (e.key === "l") show.lines = !show.lines;
-  if (e.key === "p") show.circle = !show.circle;
-  if (e.key === "e") show.edges = !show.edges;
-  if (e.key === "n") show.numbers = !show.numbers;
-  if (e.key === "ArrowRight") {
+  const input = (e.key !== undefined) ? e.key : e.target.name;
+  if (input === "c") show.cos = !show.cos;
+  if (input === "s") show.sin = !show.sin;
+  if (input === "l") show.lines = !show.lines;
+  if (input === "p") show.circle = !show.circle;
+  if (input === "e") show.edges = !show.edges;
+  if (input === "n") show.numbers = !show.numbers;
+  if (input === "ArrowRight") {
     stepOn(+10);
     show.auto = false;
   }
-  if (e.key === "ArrowLeft") {
+  if (input === "ArrowLeft") {
     stepOn(-10);
     show.auto = false;
   }
-  if (e.key === "a") show.auto = !show.auto;
-  if (e.key === " ") {
+  if (input === "a") show.auto = !show.auto;
+  if (input === " ") {
     show.auto = !show.auto;
     e.preventDefault();
   }
@@ -48,6 +49,12 @@ function onoff(e) {
 }
 
 document.addEventListener('keydown', onoff);
+for (const button of document.querySelectorAll('button')) {
+  button.addEventListener('click', onoff);
+}
+const pBtn = document.querySelector('#p');
+const lBtn = document.querySelector('#l');
+pBtn.addEventListener('click', () => { lBtn.disabled = !lBtn.disabled; });
 
 canvas.width=2*r+margin;
 canvas.height=2*r+margin;
