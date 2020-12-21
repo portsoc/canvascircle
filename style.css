@@ -1,3 +1,20 @@
+:root {
+  --bg: #EFEFEF;
+  --fg: #0F0F0F;
+  --sin: #0000dd;
+  --cos: #dd0000;
+  --circ: #880088;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0F0F0F;
+    --fg: #AFAFAF;
+    --sin: #3333FF;
+    --cos: #FF3333;
+    --circ: #FF33FF;
+    }
+}
 
 @media (max-width: 1200px) {
   :root {
@@ -21,7 +38,7 @@
 code {
   font-weight: bold;
   font-size: 120%;
-  border: solid thin black;
+  border: solid thin var(--fg);
   min-width: 1em;
   display: inline-block;
   border-radius: 0.3em;
@@ -29,7 +46,8 @@ code {
 }
 
 body {
-  background: white;
+  background: var(--bg);
+  color: var(--fg);
   font-family: sans-serif;
   display: flex;
   justify-content: center;
@@ -50,7 +68,7 @@ abbr[title] {
   text-decoration: none !important;
 }
 
-i { color: blue; font-style: normal;}
-em { color: red; font-style: normal;}
-b { color: purple; font-weight: normal;}
+i { color: var(--sin); font-style: normal;}
+em { color: var(--cos); font-style: normal;}
+b { color: var(--circ); font-weight: normal;}
 

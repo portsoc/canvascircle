@@ -14,6 +14,21 @@ const tau = 2*Math.PI;
 const step = 0.005;
 const multiplier = d/tau;
 
+
+const style = getComputedStyle(document.documentElement);
+const cols = {};
+
+setColorScheme();
+window.matchMedia('(prefers-color-scheme: dark)').addListener(setColorScheme);
+
+function setColorScheme() {
+  cols.sin = style.getPropertyValue('--sin'),
+  cols.cos = style.getPropertyValue('--cos'),
+  cols.circ = style.getPropertyValue('--circ'),
+  cols.bg = style.getPropertyValue('--bg'),
+  cols.fg = style.getPropertyValue('--fg')
+};
+
 const show = {
   sin: true,
   cos: false,
@@ -90,7 +105,7 @@ function drawInitial() {
 
   if (show.circle) {
     // draw circle using arc
-    c.strokeStyle = "purple";
+    c.strokeStyle = cols.circ;
     c.lineWidth = 2;
     if (show.circle) {
       c.beginPath();
@@ -102,7 +117,7 @@ function drawInitial() {
   if (show.sin) {
     // draw sine path
     c.beginPath();
-    c.strokeStyle = "blue";
+    c.strokeStyle = cols.sin;
     c.moveTo(2*r,r);
     for (let i=0; i<TAU; i += step) {  
       const y = r + r*Math.sin(i);
@@ -115,7 +130,7 @@ function drawInitial() {
   if (show.cos) {
     // draw cosine path
     c.beginPath();
-    c.strokeStyle = "red";
+    c.strokeStyle = cols.cos;
     c.moveTo(0,0);
     for (let i=0; i<TAU; i += step) {  
       const x =  r - r*Math.cos(i);
@@ -151,29 +166,29 @@ function drawNext() {
   c.putImageData( background, 0, 0 )
 
   if (show.circle && show.lines) {
-    if (show.sin) drawConn( x, y, axispos, y, 'blue', true );
-    if (show.cos) drawConn( x, y, x, axispos, 'red', true );
+    if (show.sin) drawConn( x, y, axispos, y, cols.sin, true );
+    if (show.cos) drawConn( x, y, x, axispos, cols.cos, true );
   }
 
 
   if (show.sin) {
     if (show.edges) {
-      drawConn( axispos, y, axispos, 0, 'blue' );
-      drawBlob( axispos, 0, 'white', 'blue'  ); 
+      drawConn( axispos, y, axispos, 0, cols.sin );
+      drawBlob( axispos, 0, cols.bg, cols.sin  ); 
     }
-    drawBlob( axispos, y, 'white', 'blue'  );
+    drawBlob( axispos, y, cols.bg, cols.sin  );
   }
 
   if (show.cos) {
     if (show.edges) {
-      drawConn( 0, axispos, x, axispos, 'red' );
-      drawBlob( 0, axispos, 'white', 'red' ); 
+      drawConn( 0, axispos, x, axispos, cols.cos );
+      drawBlob( 0, axispos, cols.bg, cols.cos ); 
     }
-    drawBlob( x, axispos, 'white', 'red' ); 
+    drawBlob( x, axispos, cols.bg, cols.cos ); 
   }
 
   if (show.circle) {
-    drawBlob( x, y, 'white', 'purple');
+    drawBlob( x, y, cols.bg, cols.circ);
   }
 
 
