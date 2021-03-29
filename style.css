@@ -1,7 +1,7 @@
 :root {
   --bg: #EFEFEF;
   --fg: #0F0F0F;
-  --sin: #0000dd;
+  --sin: #0033FF;
   --cos: #dd0000;
   --circ: #880088;
 }
@@ -10,7 +10,7 @@
   :root {
     --bg: #0F0F0F;
     --fg: #AFAFAF;
-    --sin: #3333FF;
+    --sin: #3399FF;
     --cos: #FF3333;
     --circ: #FF33FF;
     }
@@ -18,49 +18,63 @@
 
 @media (max-width: 1200px) {
   :root {
-    --layout: column;
-  }
-  canvas {
-    max-width: 100%;
+    --layout: "title" auto "key" auto "canvas" auto "text" 1fr / auto;
+    --pad: 1rem;
   }
 }
 
 @media (min-width: 1200px) {
   :root {
-    --layout: row;
-  }
-  canvas {
-    max-height: 100%;
-    width: 800px;
+    --layout: "canvas ." 1fr "canvas title" auto "canvas key" auto "canvas text" auto "canvas ." 1fr  / 2fr 1fr;
+    --pad: 3rem;
   }
 }
 
-code {
-  font-weight: bold;
-  font-size: 120%;
-  border: solid thin var(--fg);
-  min-width: 1em;
-  display: inline-block;
-  border-radius: 0.3em;
+* {
+  margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  max-width: 120rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin: auto;
+}
+
+#title { grid-area: title; }
+#key { grid-area: key; }
+#text { grid-area: text; }
+#canvas { grid-area: canvas; width: 100%; max-width: 80em;}
+
+#title, #key, #text {
+  padding: var(--pad);
+}
+
+#key div {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#key div label {
+  min-width: 10em;
 }
 
 body {
   background: var(--bg);
   color: var(--fg);
   font-family: sans-serif;
-  display: flex;
+  display: grid;
+  grid-template: var(--layout);
   justify-content: center;
   align-items: center;
-  flex-direction: var(--layout);
   min-height: 100vh;
 }
 
-main {
-  margin: 2vmin;
-  max-width: 40em;
+p {
+  margin-bottom: 1em;
 }
-
 
 abbr[title] {
   border-bottom: none !important;
@@ -68,7 +82,34 @@ abbr[title] {
   text-decoration: none !important;
 }
 
-i { color: var(--sin); font-style: normal;}
-em { color: var(--cos); font-style: normal;}
-b { color: var(--circ); font-weight: normal;}
+.sine { color: var(--sin); }
+.cosine { color: var(--cos); }
+.circle { color: var(--circ); }
 
+i, em {
+  font-family: serif;
+}
+
+label {
+  padding: 0.25em;
+  border-radius: 0.25em;
+  margin: 0.125em;
+  display: inline-block;
+  cursor: pointer;
+  user-select: none;
+  border: thin solid var(--fg);
+  transition: 0.2s linear;
+}
+
+input[type=checkbox] {
+  display: none;
+}
+
+input[type=checkbox]:checked + label {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+label[type=nudge]:active {
+  transform: scale(0.95, 0.95);
+}

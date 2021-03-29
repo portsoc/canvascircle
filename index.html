@@ -2,23 +2,43 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width">
 <link rel="stylesheet" href="style.css">
-<body>
+<title>Circles</title>
 <script src="circle.js"></script>
-<main>
-  <title>Circles</title>
 
-  <h1>Drawing Circles with <i>Sine</i> &amp; <em>Cosine</em>.</h1>
 
-  <p>A little example of how <i>sine</i> and <em>cosine</em> combine to draw a circle.
+<h1 id=title>Drawing <span class=circle>Circles</span>&nbsp;with <span
+class=sine>Sine</span>&nbsp;&amp;&nbsp;<span class=cosine>Cosine</span>.</h1>
 
-  <p>The <i>blue</i> line shows a <i>sine</i> wave travelling along the x axis. For values of <i>i</i> between 0 and <abbr title="this is Tau, which = 2π">τ</abbr>, the wave starts from the bottom of the canvas before sweeping up to the top and then back down.
+<aside id=key>
+  <p>Tap to adjust:
+  <div>
+    <input type=checkbox id=sin checked data-key=s></input><label for=sin>🆂ine wave</label>
+    <input type=checkbox id=cos checked data-key=c></input><label for=cos>🅲osine wave</label>
+    <input type=checkbox id=edges checked data-key=e></input><label for=edges>🅴dges</label>
+    <input type=checkbox id=lines checked data-key=l></input><label for=lines>🅻ines</label>
+    <input type=checkbox id=circle checked data-key=p></input><label for=circle>🅿erimeter</label>
+    <input type=checkbox id=numbers checked data-key=n></input><label for=numbers>🅽umbers</label>
+    <input type=checkbox id=auto checked data-key=a></input><label for=auto>🅰nimate</label>
+    <label type=nudge id=down>⬅️ to step</label>
+    <label type=nudge id=up>➡️ to step</label>
+  </div>
+</aside>
 
-  <p>The <em>red</em> line shows how (for the same values of i, and when plotted on a vertical instead of a horizontal axis) a cosine wave does not start at the edge of the canvas, but instead starts in the middle, so it sweeps right then left, before return to the middle.
+<main id=text>
+  <p>Illustration of how <span class="sine">sine</span> and <span class=cosine>cosine</span> combine to draw a circle.
 
-  <p>The <b>purple</b> line combines the <em>x</em> position of the <em>cosine wave</em>, with the <i>y</i> position of the <i>sine wave</i>, and thus naturally draws a circle.
+  <p>The <span class="sine">blue</span> line shows a <span class="sine">sine</span> wave travelling along
+  the <i>x</i> axis.  For values of <i>i</i> between 0 and <abbr title="this
+  is Tau, which = 2π">τ</abbr>, the wave starts in the middle left of
+  the canvas, sweeps to the top, then the bottom and returns to the
+  middle at the right edge - a classic sine wave shape.
 
-  <p>Toggles are provided: 🆂 for sine wave, 🅲 for cosine wave, 🅴 for edges, 🅻 for lines, 🅿 for the purple circle path, 🅽 shows numbers,  ⬅️ and ➡️ to step, and 🅰 to animate.
+  <p>The <span class=cosine>red</span> line shows how (for the same values of <span class="sine">i</span>, and
+  when plotted on a vertical instead of a horizontal axis) a cosine
+  wave starts at the top left corner of the canvas, sweeps across to
+  the right edge and then back to the bottom left corner.
+
+  <p>The <span class=circle>purple</span> line combines the <span class=cosine>x</span> position of the <span class=cosine>cosine wave</span>, with the <span class="sine">y</span> position of the <span class="sine">sine wave</span>, and thus naturally draws a circle.
 
   <p>This demo uses the HTML Canvas, CSS and JavaScript.</p>
 </main>
-<body>

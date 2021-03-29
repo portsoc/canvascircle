@@ -1,25 +1,29 @@
 "use strict";
 
 const canvas = document.createElement("canvas");
+canvas.id='canvas';
+
 const c = canvas.getContext('2d');
 
 const TAU = 2*Math.PI;
-const r=200; // radius
+const SCALE = 8;
+const r=50; // radius
 const d=2*r; // diameter
-const blobsize = 10;
-const blobOffset = blobsize/2;
-const margin = 16*blobsize;
+const blobsize = r/25;
+const blobOffset = SCALE*blobsize/2;
+const margin = SCALE*r;
 
 const tau = 2*Math.PI;
-const step = 0.005;
+const step = 0.01;
 const multiplier = d/tau;
-
 
 const style = getComputedStyle(document.documentElement);
 const cols = {};
+const el = {};
 
-setColorScheme();
-window.matchMedia('(prefers-color-scheme: dark)').addListener(setColorScheme);
+let background = null;
+let i=TAU;
+
 
 function setColorScheme() {
   cols.sin = style.getPropertyValue('--sin'),
@@ -29,48 +33,48 @@ function setColorScheme() {
   cols.fg = style.getPropertyValue('--fg')
 };
 
-const show = {
-  sin: true,
-  cos: false,
-  lines: false,
-  edges: false,
-  circle: false,
-  auto: false,
-  numbers: true
-};
+function isShown(what) {
+  const e = document.getElementById(what);
+  return e.checked;
+}
+
+function flipCheckbox(id) {
+  const e = document.getElementById(id);
+  e.click();
+}
+
+function nudge(dir) {
+  stepOn(dir);
+  const auto = document.getElementById('auto');
+  if (auto.checked) auto.click();
+}
+
+function nudgeUp() {
+  nudge(+1);
+}
+
+function nudgeDown() {
+  nudge(-1);
+}
 
 function onoff(e) {
-  if (e.key === "c") show.cos = !show.cos;
-  if (e.key === "s") show.sin = !show.sin;
-  if (e.key === "l") show.lines = !show.lines;
-  if (e.key === "p") show.circle = !show.circle;
-  if (e.key === "e") show.edges = !show.edges;
-  if (e.key === "n") show.numbers = !show.numbers;
-  if (e.key === "ArrowRight") {
-    stepOn(+10);
-    show.auto = false;
-  }
-  if (e.key === "ArrowLeft") {
-    stepOn(-10);
-    show.auto = false;
-  }
-  if (e.key === "a") show.auto = !show.auto;
+  if (e.key === "c") flipCheckbox('cos');
+  if (e.key === "s") flipCheckbox('sin');
+  if (e.key === "l") flipCheckbox('lines');
+  if (e.key === "p") flipCheckbox('circle');
+  if (e.key === "e") flipCheckbox('edges');
+  if (e.key === "n") flipCheckbox('numbers');
+  if (e.key === "ArrowRight") nudgeUp();
+  if (e.key === "ArrowLeft") nudgeDown();
+  if (e.key === "a") flipCheckbox('auto');
   if (e.key === " ") {
-    show.auto = !show.auto;
+    flipCheckbox('auto');
     e.preventDefault();
   }
   drawInitial();
 }
 
-document.addEventListener('keydown', onoff);
-
-canvas.width=2*r+margin;
-canvas.height=2*r+margin;
-c.translate(margin/2, margin/2);
-c.lineWidth = 2;
-c.font = '12px sans-serif';
-
-function drawBlob(x,y, fill, stroke) {
+function drawBlob(x,y, fill, stroke, drawx=true, drawy=true) {
   c.beginPath();
   c.arc(x, y, blobsize, 0, TAU);
   c.fillStyle = fill;
@@ -79,9 +83,12 @@ function drawBlob(x,y, fill, stroke) {
   c.stroke();
   c.closePath();
 
-  if (show.numbers) {
+  if (isShown('numbers')) {
     c.fillStyle = stroke;
-    c.fillText("x" + x.toFixed(0) + " y" + y.toFixed(0), x+blobsize, y-blobsize);
+    c.font = `${r/20}pt sans-serif`;
+    const xText = drawx ? "x" + x.toFixed(0) : "";
+    const yText = drawy ? "y" + y.toFixed(0) : "";
+    c.fillText(`${xText} ${yText}`, x+blobsize, y-blobsize );
   }
 }
 
@@ -97,29 +104,24 @@ function drawConn(x,y, x1,y1, col, dashed = false) {
 }
 
 
-let background = null;
-
 function drawInitial() {
-  
   c.clearRect(-margin, -margin,canvas.width + margin, canvas.height + margin);
+  c.lineWidth = r/100;
 
-  if (show.circle) {
+  if (isShown('circle')) {
     // draw circle using arc
+    c.beginPath();
     c.strokeStyle = cols.circ;
-    c.lineWidth = 2;
-    if (show.circle) {
-      c.beginPath();
-      c.arc(200, 200, r, 0, TAU);
-      c.stroke();
-    }    
+    c.arc(r, r, r, 0, TAU);
+    c.stroke();
   }
 
-  if (show.sin) {
+  if (isShown('sin')) {
     // draw sine path
     c.beginPath();
     c.strokeStyle = cols.sin;
     c.moveTo(2*r,r);
-    for (let i=0; i<TAU; i += step) {  
+    for (let i=0; i<TAU; i += step) {
       const y = r + r*Math.sin(i);
       const axispos = d - i*multiplier % d;
       c.lineTo(axispos,y);
@@ -127,12 +129,12 @@ function drawInitial() {
     c.stroke();
   }
 
-  if (show.cos) {
+  if (isShown('cos')) {
     // draw cosine path
     c.beginPath();
     c.strokeStyle = cols.cos;
     c.moveTo(0,0);
-    for (let i=0; i<TAU; i += step) {  
+    for (let i=0; i<TAU; i += step) {
       const x =  r - r*Math.cos(i);
       const axispos = i*multiplier % d;
       c.lineTo(x,axispos);
@@ -149,12 +151,10 @@ function drawInitial() {
 function stepOn(direction) {
     i-=(step*direction);
     if (i<0) i+=TAU;
-
 }
 
-let i=TAU;
 function drawNext() {
-  if (show.auto) {
+  if (isShown('auto')) {
     stepOn(+1);
   }
 
@@ -165,29 +165,29 @@ function drawNext() {
   // redraw the background covering the previous frame.
   c.putImageData( background, 0, 0 )
 
-  if (show.circle && show.lines) {
-    if (show.sin) drawConn( x, y, axispos, y, cols.sin, true );
-    if (show.cos) drawConn( x, y, x, axispos, cols.cos, true );
+  if (isShown('circle') && isShown('lines')) {
+    if (isShown('sin')) drawConn( x, y, axispos, y, cols.sin, true );
+    if (isShown('cos')) drawConn( x, y, x, axispos, cols.cos, true );
   }
 
 
-  if (show.sin) {
-    if (show.edges) {
+  if (isShown('sin')) {
+    if (isShown('edges')) {
       drawConn( axispos, y, axispos, 0, cols.sin );
-      drawBlob( axispos, 0, cols.bg, cols.sin  ); 
+      drawBlob( axispos, 0, cols.bg, cols.sin );
     }
-    drawBlob( axispos, y, cols.bg, cols.sin  );
+    drawBlob( axispos, y, cols.bg, cols.sin, false, true  );
   }
 
-  if (show.cos) {
-    if (show.edges) {
+  if (isShown('cos')) {
+    if (isShown('edges')) {
       drawConn( 0, axispos, x, axispos, cols.cos );
-      drawBlob( 0, axispos, cols.bg, cols.cos ); 
+      drawBlob( 0, axispos, cols.bg, cols.cos );
     }
-    drawBlob( x, axispos, cols.bg, cols.cos ); 
+    drawBlob( x, axispos, cols.bg, cols.cos, true, false );
   }
 
-  if (show.circle) {
+  if (isShown('circle')) {
     drawBlob( x, y, cols.bg, cols.circ);
   }
 
@@ -195,8 +195,34 @@ function drawNext() {
   window.requestAnimationFrame(drawNext);
 }
 
-document.body.appendChild(canvas);
+function init() {
 
-drawInitial();
-drawNext();
-stepOn(+1);
+  el.current = document.querySelector('#current');
+
+  document.querySelector('#key').after(canvas);
+
+  document.addEventListener('keydown', onoff);
+
+  document.querySelector('#down').addEventListener('click', nudgeDown);
+  document.querySelector('#up').addEventListener('click', nudgeUp);
+
+  const inputs = document.querySelectorAll('input');
+  inputs.forEach( i => i.addEventListener('change', drawInitial) );
+
+  canvas.width=2*SCALE*r+margin;
+  canvas.height=2*SCALE*r+margin;
+  c.translate(margin/2, margin/2);
+  c.lineWidth = 2;
+  c.font = '12px sans-serif';
+  c.scale(SCALE, SCALE);
+
+  setColorScheme();
+  window.matchMedia('(prefers-color-scheme: dark)').addListener(setColorScheme);
+
+  drawInitial();
+  drawNext();
+  stepOn(+1);
+
+}
+
+window.addEventListener('load', init);
