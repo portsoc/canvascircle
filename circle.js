@@ -1,34 +1,32 @@
 'use strict';
 
-const canvas = document.createElement('canvas');
-canvas.id = 'canvas';
-
-const c = canvas.getContext('2d');
-
+// constants
+const DEFAULT_STEP = 0.025;
 const TAU = 2 * Math.PI;
+const RADIUS = 50;
 const SCALE = 8;
-const r = 50; // radius
-const d = 2 * r; // diameter
-const blobsize = r / 25;
-const margin = SCALE * r;
 
-const tau = 2 * Math.PI;
-const step = 0.01;
-const multiplier = d / tau;
+// computed constants
+const BLOB_SIZE = RADIUS / 25;
+const DIAMETER = 2 * RADIUS;
+const MARGIN = SCALE * RADIUS;
+const MULTIPLIER = DIAMETER / TAU;
+const STYLE = getComputedStyle(document.documentElement);
 
-const style = getComputedStyle(document.documentElement);
-console.log(style);
-const cols = {};
-const el = {};
+// defined in init()
+let background;
+let canvas;
+let cols;
+let ctx;
+let direction;
+let el;
+let current;
+let stepSize;
 
-let background = null;
-let i = TAU;
-
-
-function setColorScheme() {
+function getStyleFromCSS() {
   const properties = 'sin cos sinalpha cosalpha circ bg fg'.split(' ');
   for (const prop of properties) {
-    cols[prop] = style.getPropertyValue('--' + prop);
+    cols[prop] = STYLE.getPropertyValue('--' + prop);
   }
 }
 
@@ -48,107 +46,124 @@ function onoff(e) {
     case 'e': el.edges.click(); break;
     case 'n': el.numbers.click(); break;
     case 'a': el.auto.click(); break;
+    case 'r': el.reverse.click(); break;
   }
   drawInitial();
 }
 
 function drawBlob(x, y, fill, stroke, fillx, filly) {
-  c.beginPath();
-  c.arc(x, y, blobsize, 0, TAU);
-  c.fillStyle = fill;
-  c.strokeStyle = stroke;
-  c.fill();
-  c.stroke();
-  c.closePath();
+  ctx.beginPath();
+  ctx.arc(x, y, BLOB_SIZE, 0, TAU);
+  ctx.fillStyle = fill;
+  ctx.strokeStyle = stroke;
+  ctx.fill();
+  ctx.stroke();
+  ctx.closePath();
 
   if (el.numbers.checked) {
-    c.font = `${r / 20}pt sans-serif`;
-    c.fillStyle = fillx || stroke;
-    c.fillText('x' + x.toFixed(0), x + blobsize, y - blobsize * 3);
-    c.fillStyle = filly || stroke;
-    c.fillText('y' + y.toFixed(0), x + blobsize, y - blobsize);
+    ctx.font = `${RADIUS / 20}pt sans-serif`;
+    ctx.fillStyle = fillx || stroke;
+    ctx.fillText('x' + x.toFixed(0), x + BLOB_SIZE, y - BLOB_SIZE * 3);
+    ctx.fillStyle = filly || stroke;
+    ctx.fillText('y' + y.toFixed(0), x + BLOB_SIZE, y - BLOB_SIZE);
   }
 }
 
 function drawConn(x, y, x1, y1, col, dashed = false) {
-  c.beginPath();
-  c.strokeStyle = col;
-  c.moveTo(x, y);
-  c.lineTo(x1, y1);
-  if (dashed) c.setLineDash([4, 4]);
-  c.stroke();
-  c.closePath();
-  c.setLineDash([]);
+  ctx.beginPath();
+  ctx.strokeStyle = col;
+  ctx.moveTo(x, y);
+  ctx.lineTo(x1, y1);
+  if (dashed) ctx.setLineDash([4, 4]);
+  ctx.stroke();
+  ctx.closePath();
+  ctx.setLineDash([]);
 }
 
 
 function drawInitial() {
-  c.clearRect(-margin, -margin, canvas.width + margin, canvas.height + margin);
-  c.lineWidth = r / 100;
+  ctx.clearRect(-MARGIN, -MARGIN, canvas.width + MARGIN, canvas.height + MARGIN);
+  ctx.lineWidth = RADIUS / 100;
 
   if (el.circle.checked) {
     // draw circle using arc
-    c.beginPath();
-    c.strokeStyle = cols.circ;
-    c.arc(r, r, r, 0, TAU);
-    c.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = cols.circ;
+    ctx.arc(RADIUS, RADIUS, RADIUS, 0, TAU);
+    ctx.stroke();
   }
 
   if (el.sin.checked) {
     // draw sine path
-    c.beginPath();
-    c.strokeStyle = cols.sin;
-    c.moveTo(2 * r, r);
-    for (let i = 0; i < TAU; i += step) {
-      const y = r + r * Math.sin(i);
-      const axispos = d - i * multiplier % d;
-      c.lineTo(axispos, y);
+    ctx.beginPath();
+    ctx.strokeStyle = cols.sin;
+    ctx.moveTo(2 * RADIUS, RADIUS);
+    for (let i = 0; i < TAU; i += stepSize / 10) {
+      const y = RADIUS + RADIUS * Math.sin(i);
+      const axispos = DIAMETER - i * MULTIPLIER;
+      ctx.lineTo(axispos, y);
     }
-    c.stroke();
+    ctx.stroke();
   }
 
   if (el.cos.checked) {
     // draw cosine path
-    c.beginPath();
-    c.strokeStyle = cols.cos;
-    c.moveTo(0, 0);
-    for (let i = 0; i < TAU; i += step) {
-      const x = r - r * Math.cos(i);
-      const axispos = i * multiplier % d;
-      c.lineTo(x, axispos);
+    ctx.beginPath();
+    ctx.strokeStyle = cols.cos;
+    ctx.moveTo(0, 0);
+    for (let i = 0; i < TAU; i += stepSize / 10) {
+      const x = RADIUS - RADIUS * Math.cos(i);
+      const axispos = i * MULTIPLIER;
+      ctx.lineTo(x, axispos);
     }
-    c.stroke();
+    ctx.stroke();
   }
 
-  background = c.getImageData(0, 0, canvas.width, canvas.height);
+  background = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
   // create a bitmap copy of the canvas
 }
 
 
 function stepOn(direction) {
-  i -= (step * direction);
-  if (i < 0) i += TAU;
+  current += stepSize * direction;
+  if (current <= 0) {
+    if (el.reverse.checked) {
+      return -direction;
+    } else {
+      current += TAU;
+    }
+  }
+  if (current >= TAU) {
+    if (el.reverse.checked) {
+      return -direction;
+    } else {
+      current -= TAU;
+    }
+  }
+  return direction;
 }
 
 function drawNext() {
   if (el.auto.checked) {
-    stepOn(+1);
+    direction = stepOn(direction);
   }
 
-  const x = r - r * Math.cos(i);
-  const y = r + r * Math.sin(i);
-  const axispos = d - (i * multiplier % d);
+  // when reverse is unclicked, ongoing reverses should stop
+  if (el.reverse.checked && stepSize < 0) stepSize = -stepSize;
+
+  const x = RADIUS - RADIUS * Math.cos(current);
+  const y = RADIUS - RADIUS * Math.sin(current);
+  const axispos = current * MULTIPLIER;
 
   // redraw the background covering the previous frame.
-  c.putImageData(background, 0, 0);
+  ctx.putImageData(background, 0, 0);
 
   // connectors between waves and circle
   if (el.circle.checked && el.lines.checked) {
     if (el.sin.checked) drawConn(x, y, axispos, y, cols.sin, true);
     if (el.cos.checked) drawConn(x, y, x, axispos, cols.cos, true);
   }
-
 
   if (el.sin.checked) {
     if (el.edges.checked) {
@@ -176,28 +191,40 @@ function drawNext() {
 }
 
 function init() {
+  // vars
+  current = 0;
+  stepSize = DEFAULT_STEP;
+  direction = 1;
+  el = {};
+  cols = {};
+
+  // set up el to point to all id'd elements
   const all = document.querySelectorAll('[id]');
   all.forEach(e => { el[e.id] = e; });
 
-  el.key.after(canvas);
+  getStyleFromCSS();
 
+  // add listeners
+  const inputs = document.querySelectorAll('input');
+  inputs.forEach(i => i.addEventListener('change', drawInitial));
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', getStyleFromCSS);
   document.addEventListener('keydown', onoff);
-
   el.down.addEventListener('click', () => nudge(-1));
   el.up.addEventListener('click', () => nudge(+1));
 
-  const inputs = document.querySelectorAll('input');
-  inputs.forEach(i => i.addEventListener('change', drawInitial));
+  // prep canvas
+  canvas = document.createElement('canvas');
+  canvas.id = 'canvas';
+  el.key.after(canvas);
 
-  canvas.width = 2 * SCALE * r + margin;
-  canvas.height = 2 * SCALE * r + margin;
-  c.translate(margin / 2, margin / 2);
-  c.lineWidth = 2;
-  c.font = '12px sans-serif';
-  c.scale(SCALE, SCALE);
+  canvas.width = 2 * SCALE * RADIUS + MARGIN;
+  canvas.height = 2 * SCALE * RADIUS + MARGIN;
 
-  setColorScheme();
-  window.matchMedia('(prefers-color-scheme: dark)').addListener(setColorScheme);
+  ctx = canvas.getContext('2d');
+  ctx.translate(MARGIN / 2, MARGIN / 2);
+  ctx.lineCap = 'round';
+  ctx.font = '12px sans-serif';
+  ctx.scale(SCALE, SCALE);
 
   drawInitial();
   drawNext();
