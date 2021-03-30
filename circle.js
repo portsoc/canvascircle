@@ -63,9 +63,9 @@ function drawBlob(x, y, fill, stroke, fillx, filly) {
 
   if (el.numbers.checked) {
     c.font = `${r / 20}pt sans-serif`;
-    c.fillStyle = fillx ? fillx : stroke;
+    c.fillStyle = fillx || stroke;
     c.fillText('x' + x.toFixed(0), x + blobsize, y - blobsize * 3);
-    c.fillStyle = filly ? filly : stroke;
+    c.fillStyle = filly || stroke;
     c.fillText('y' + y.toFixed(0), x + blobsize, y - blobsize);
   }
 }
@@ -145,7 +145,7 @@ function drawNext() {
 
   // connectors between waves and circle
   if (el.circle.checked && el.lines.checked) {
-    if (el.sin.checked) drawConn(x, y, axispos, y, cols.sin, true,);
+    if (el.sin.checked) drawConn(x, y, axispos, y, cols.sin, true);
     if (el.cos.checked) drawConn(x, y, x, axispos, cols.cos, true);
   }
 
