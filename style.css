@@ -4,6 +4,8 @@
   --sin: #0033FF;
   --cos: #dd0000;
   --circ: #880088;
+  --sinalpha: #0033FF7F;
+  --cosalpha: #dd00007F;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -13,6 +15,8 @@
     --sin: #3399FF;
     --cos: #FF3333;
     --circ: #FF33FF;
+    --sinalpha: #3399FF7F;
+    --cosalpha: #FF33337F;
     }
 }
 

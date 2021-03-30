@@ -17,6 +17,7 @@ const step = 0.01;
 const multiplier = d / tau;
 
 const style = getComputedStyle(document.documentElement);
+console.log(style);
 const cols = {};
 const el = {};
 
@@ -25,11 +26,10 @@ let i = TAU;
 
 
 function setColorScheme() {
-  cols.sin = style.getPropertyValue('--sin');
-  cols.cos = style.getPropertyValue('--cos');
-  cols.circ = style.getPropertyValue('--circ');
-  cols.bg = style.getPropertyValue('--bg');
-  cols.fg = style.getPropertyValue('--fg');
+  const properties = 'sin cos sinalpha cosalpha circ bg fg'.split(' ');
+  for (const prop of properties) {
+    cols[prop] = style.getPropertyValue('--' + prop);
+  }
 }
 
 function nudge(dir) {
@@ -52,7 +52,7 @@ function onoff(e) {
   drawInitial();
 }
 
-function drawBlob(x, y, fill, stroke, drawx = true, drawy = true) {
+function drawBlob(x, y, fill, stroke, fillx, filly) {
   c.beginPath();
   c.arc(x, y, blobsize, 0, TAU);
   c.fillStyle = fill;
@@ -62,11 +62,11 @@ function drawBlob(x, y, fill, stroke, drawx = true, drawy = true) {
   c.closePath();
 
   if (el.numbers.checked) {
-    c.fillStyle = stroke;
     c.font = `${r / 20}pt sans-serif`;
-    const xText = drawx ? 'x' + x.toFixed(0) : '';
-    const yText = drawy ? 'y' + y.toFixed(0) : '';
-    c.fillText(`${xText} ${yText}`, x + blobsize, y - blobsize);
+    c.fillStyle = fillx ? fillx : stroke;
+    c.fillText('x' + x.toFixed(0), x + blobsize, y - blobsize * 3);
+    c.fillStyle = filly ? filly : stroke;
+    c.fillText('y' + y.toFixed(0), x + blobsize, y - blobsize);
   }
 }
 
@@ -143,30 +143,33 @@ function drawNext() {
   // redraw the background covering the previous frame.
   c.putImageData(background, 0, 0);
 
+  // connectors between waves and circle
   if (el.circle.checked && el.lines.checked) {
-    if (el.sin.checked) drawConn(x, y, axispos, y, cols.sin, true);
+    if (el.sin.checked) drawConn(x, y, axispos, y, cols.sin, true,);
     if (el.cos.checked) drawConn(x, y, x, axispos, cols.cos, true);
   }
 
 
   if (el.sin.checked) {
     if (el.edges.checked) {
+      // line from axis to sine wave
       drawConn(axispos, y, axispos, 0, cols.sin);
-      drawBlob(axispos, 0, cols.bg, cols.sin);
+      drawBlob(axispos, 0, cols.bg, cols.sin, cols.sinalpha, cols.sinalpha);
     }
-    drawBlob(axispos, y, cols.bg, cols.sin, false, true);
+    drawBlob(axispos, y, cols.bg, cols.sin, cols.sinalpha, cols.sin);
   }
 
   if (el.cos.checked) {
     if (el.edges.checked) {
+      // line from axis to cosine wave
       drawConn(0, axispos, x, axispos, cols.cos);
-      drawBlob(0, axispos, cols.bg, cols.cos);
+      drawBlob(0, axispos, cols.bg, cols.cos, cols.cosalpha, cols.cosalpha);
     }
-    drawBlob(x, axispos, cols.bg, cols.cos, true, false);
+    drawBlob(x, axispos, cols.bg, cols.cos, cols.cos, cols.cosalpha);
   }
 
   if (el.circle.checked) {
-    drawBlob(x, y, cols.bg, cols.circ);
+    drawBlob(x, y, cols.bg, cols.circ, cols.cos, cols.sin);
   }
 
   window.requestAnimationFrame(drawNext);
